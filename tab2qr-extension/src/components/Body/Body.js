@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Button, Col, Row } from "antd";
-import AnimatedQR from "./AnimatedQR";
-import config from "../config";
+import AnimatedQR from "../AnimatedQR/AnimatedQR";
+import config from "../../config";
 import "./Body.css";
 
 function Body(props) {
@@ -11,8 +11,10 @@ function Body(props) {
   const [currentTabQRVisible, setCurrentTabQRVisible] = useState(false);
 
   useEffect(() => {
-    // only if running in chrome extension mode fetch
-    // the current tab url; otherwise use "document"
+    /**
+     * Fetch tab URLs from current window using chrome.tabs if extension is installed
+     * in chromium based browser, otherwise use document.URL.
+     */
     if (chrome.tabs) {
       chrome.tabs.query(
         {
@@ -28,16 +30,19 @@ function Body(props) {
     }
   }, []);
 
+  // Set condition to "true" to generate QR for current tab only.
   const onCurrentTabClicked = () => {
     setCurrentTabQRVisible(true);
   };
 
+  // Create JSON data for Tab URLs.
   const formatdataToSend = (url) => {
     return JSON.stringify({
       tabs: [url],
     });
   };
 
+  // Generate QR code for multiple Tab URLs.
   const renderChoiceScreen = (
     <div style={{ paddingBottom: 20 }}>
       <div className="title">Generate QR code for</div>

@@ -3,8 +3,9 @@ import {StyleSheet, View, Text, FlatList} from 'react-native';
 import {Modal} from 'react-native-paper';
 import {Ionicons} from '@expo/vector-icons';
 import uuid from 'uuid-random';
-import TabCard from './TabCard';
+import TabCard from '../TabCard/TabCard';
 
+// Display all the URLs as a list.
 export default function DisplayUrls(props) {
   const renderItem = ({item: tabUrl}) => <TabCard url={tabUrl} />;
 

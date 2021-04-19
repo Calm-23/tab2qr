@@ -10,7 +10,7 @@ import {Text, Surface} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import uuid from 'uuid-random';
 import Moment from 'react-moment';
-import ScanHistory from '../db/modal';
+import ScanHistory from '../../db/modal';
 
 /**
  * Item format :
@@ -21,9 +21,9 @@ import ScanHistory from '../db/modal';
  *     tabs: <array-of-urls>
  *   }
  * }
+ * Fetch list of URLs inside a particular Card.
  */
-
-const ListItemCard = ({item, deleteItem}) => {
+export const ListItemCard = ({item, deleteItem}) => {
   const navigation = useNavigation();
 
   const onPress = () => {
@@ -62,12 +62,14 @@ export default function SavedItemsList(props) {
     props.scannedHistory,
   );
 
+  // Reload screen.
   const handleRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setScannedHistory(await ScanHistory.query({order: 'timestamp DESC'}));
     setRefreshing(false);
   }, [refreshing]);
 
+  // Delete Cards
   const handleDelete = (_id) => {
     setScannedHistory((prev) => prev.filter((item) => item.id != _id));
   };

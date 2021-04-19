@@ -18,11 +18,11 @@ import {
 import uuid from 'uuid-random';
 import Moment from 'react-moment';
 import {dataToFrames} from 'qrloop';
-import AnimatedQR from './AnimatedQR';
-import TabCard from './TabCard';
-import ScanHistory from '../db/modal';
+import {AnimatedQR} from '../AnimatedQR/AnimatedQR';
+import {TabCard} from '../TabCard/TabCard';
+import ScanHistory from '../../db/modal';
 
-const FABButton = (props) => {
+export const FABButton = (props) => {
   const {onDelete, onRename, onSendAll} = props;
   const [state, setState] = React.useState({open: false});
   const {open} = state;
@@ -94,11 +94,11 @@ export default function SavedItemExpanded(props) {
   };
 
   const onDelete = () => {
-    // delete from db instance
+    // Delete from db instance.
     ScanHistory.destroy(data.id);
-    // call a function here to delete the data from parent
+    // Call a function here to delete the data from parent.
     deleteItem(data.id);
-    // return back
+    // Return back.
     props.navigation.goBack();
   };
 
@@ -107,26 +107,27 @@ export default function SavedItemExpanded(props) {
   };
 
   const onTitleUpdate = () => {
-    // update db instance
+    // Update db instance.
     ScanHistory.update({
       id: data.id,
       title: newTitle,
       timestamp: Math.round(Date.now() / 1000),
     });
-    // update itself
+    // Update itself.
     data.title = newTitle;
-    // update parent ... did automatically
+    // Update parent automatically.
     hideRenameModal();
   };
 
+  // Send all the Tab URLs form a card using QR code.
   const onSendAll = React.useCallback(() => {
     showQRModal(JSON.stringify(data.windowInfo));
   }, [showQRModal]);
 
+  // Send single Tab URL using QR code.
   const onSendSingle = React.useCallback(
     (url) => {
       const value = JSON.stringify({
-        incognito: data.windowInfo.incognito,
         tabs: [url],
       });
       showQRModal(value);
@@ -174,12 +175,14 @@ export default function SavedItemExpanded(props) {
               </View>
             </View>
 
-            <FlatList
-              data={data.windowInfo.tabs}
-              renderItem={renderItem}
-              ListFooterComponent={renderFooter}
-              keyExtractor={keyExtractor}
-            />
+            {props.mock == null && (
+              <FlatList
+                data={data.windowInfo.tabs}
+                renderItem={renderItem}
+                ListFooterComponent={renderFooter}
+                keyExtractor={keyExtractor}
+              />
+            )}
           </View>
 
           <FABButton
@@ -192,12 +195,14 @@ export default function SavedItemExpanded(props) {
             visible={QRModalvisible}
             onDismiss={hideQRModal}
             contentContainerStyle={styles.centerItems}>
-            <AnimatedQR
-              frames={frames}
-              fps={5}
-              size={QRCodeSize}
-              quietZone={20}
-            />
+            {props.mock == null && (
+              <AnimatedQR
+                frames={frames}
+                fps={5}
+                size={QRCodeSize}
+                quietZone={20}
+              />
+            )}
           </Modal>
 
           <Modal
